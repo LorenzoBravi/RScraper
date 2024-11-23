@@ -136,6 +136,52 @@ class RSWebScraper:
         
         return products
 
+    @bypass_popup_handling
+    def get_current_page_url(self):
+        return self.driver.current_url
+
+    @bypass_popup_handling
+    def go_to_product_url(self, product_url):
+        """
+        Navigate to a specific product URL and remember it.
+        """
+        self.driver.get(product_url)
+        self.current_product_url = product_url  # Remember the URL
+
+    @bypass_popup_handling
+    def extract_product_details(self):
+        """
+        Extract detailed information of the currently visited product.
+        Returns:
+            dict: A dictionary containing product details.
+        """
+        if not self.current_product_url:
+            raise ValueError("No product URL has been visited. Use 'go_to_product_url' first.")
+
+        try:
+            product_title = self.driver.find_element(By.CSS_SELECTOR, "h1.font-oswald").text.strip()
+            rs_part_no = self.driver.find_element(By.CSS_SELECTOR, "dd[data-testid='stock-number-desktop']").text.strip()
+            mfr_part_no = self.driver.find_element(By.CSS_SELECTOR, "dd[data-testid='mpn-desktop']").text.strip()
+            manufacturer = self.driver.find_element(By.CSS_SELECTOR, "dd[data-testid='brand-desktop']").text.strip()
+            price_excl_vat = self.driver.find_element(By.CSS_SELECTOR, "p[data-testid='price-exc-vat']").text.strip()
+            price_incl_vat = self.driver.find_element(By.CSS_SELECTOR, "p[data-testid='price-inc-vat']").text.strip()
+            image_url = self.driver.find_element(By.CSS_SELECTOR, "img[data-testid='gallery-fallback-image']").get_attribute("src")
+
+            return {
+                "Title": product_title,
+                "RS Part No.": rs_part_no,
+                "Manufacturer Part No.": mfr_part_no,
+                "Manufacturer": manufacturer,
+                "Price (Excl. VAT)": price_excl_vat,
+                "Price (Incl. VAT)": price_incl_vat,
+                "Image URL": image_url,
+                "Product URL": self.current_product_url,
+            }
+        except NoSuchElementException as e:
+            raise ValueError(f"Error extracting product details: {e}")
+
+
+    @bypass_popup_handling
     def close(self):
         """
         Close the browser.
