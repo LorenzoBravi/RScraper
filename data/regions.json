@@ -1,0 +1,11 @@
+{
+    "global": "https://www.rs-online.com/",
+    "austria": "https://at.rs-online.com/",
+    "germany": "https://de.rs-online.com/",
+    "france": "https://fr.rs-online.com/",
+    "italy": "https://it.rs-online.com/",
+    "spain": "https://es.rs-online.com/",
+    "united_kingdom": "https://uk.rs-online.com/",
+    "united_states": "https://us.rs-online.com/",
+    "china": "https://cn.rs-online.com/"
+}
